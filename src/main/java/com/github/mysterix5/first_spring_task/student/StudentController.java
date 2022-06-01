@@ -1,11 +1,10 @@
 package com.github.mysterix5.first_spring_task.student;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/students")
@@ -23,8 +22,8 @@ public class StudentController {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<Student> getStudentsById(@PathVariable String id){
-        return studentService.getStudentById(id);
+    public ResponseEntity<Student> getStudentsById(@PathVariable String id){
+        return ResponseEntity.of(studentService.getStudentById(id));
     }
 
     @GetMapping
@@ -34,14 +33,13 @@ public class StudentController {
 
     @PostMapping
     public void setStudent(@RequestBody Student student){
-        System.out.println(student);
         studentService.addStudent(student);
     }
 
     @PutMapping
-    public void changeStudentName(@RequestParam Optional<Integer> index, @RequestParam Optional<String> name){
+    public void changeStudentName(@RequestParam Optional<String> id, @RequestParam Optional<String> name){
 
-        studentService.setStudentName(index, name);
+        studentService.setStudentName(id, name);
     }
 
     @DeleteMapping
