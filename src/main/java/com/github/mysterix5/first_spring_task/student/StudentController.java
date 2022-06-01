@@ -1,6 +1,7 @@
 package com.github.mysterix5.first_spring_task.student;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,19 +33,18 @@ public class StudentController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void setStudent(@RequestBody Student student){
         studentService.addStudent(student);
     }
 
     @PutMapping
     public void changeStudentName(@RequestParam Optional<String> id, @RequestParam Optional<String> name){
-
         studentService.setStudentName(id, name);
     }
 
     @DeleteMapping
     public void deleteAllStudentsByPartName(@RequestParam Optional<String> partname){
-
         studentService.deleteAllStudentsByPartName(partname);
     }
 }

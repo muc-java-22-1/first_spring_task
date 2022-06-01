@@ -3,34 +3,43 @@ package com.github.mysterix5.first_spring_task.student;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    private Map<String, Student> students = new HashMap<>();
+    StudentRepository studentRepository;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
 
-    public StudentService() {
         Student ronja = new Student("Ronja");
         Student birk = new Student("Birk");
-        students.put(ronja.getId(), ronja);
-        students.put(birk.getId(), birk);
+        studentRepository.save(ronja);
+        studentRepository.save(birk);
     }
 
     public void addStudent(Student student){
-        students.put(student.getId(), student);
+
+        studentRepository.save(student);
     }
     public List<Student> getStudents(){
-        return students.values().stream().toList();
+
+        return studentRepository.findAll();
     }
 
     public void setStudentName(Optional<String> id, Optional<String> name){
         if(id.isEmpty() || name.isEmpty()){
             return;
         }
-        students.get(id.get()).setName(name.get());
+        var student = studentRepository.findById(id.get());
+        if(student.isEmpty()){
+            return;
+        }
+        student.get().setName(name.get());
+        studentRepository.save(student.get());
     }
     public List<Student> getStudentsByNameSearch(String partname){
-        return students.values().stream()
+        var students = studentRepository.findAll();
+
+        return students.stream()
                 .filter(s->s.getName().toLowerCase().contains(partname.toLowerCase()))
                 .toList();
     }
@@ -39,12 +48,16 @@ public class StudentService {
         if(partname.isEmpty()){
             return;
         }
-        students =  students.values().stream()
-                .filter(s->!s.getName().toLowerCase().contains(partname.get().toLowerCase()))
-                .collect(Collectors.toMap(Student::getId, s->s));
+
+        var studentsToDelete =  studentRepository.findAll().stream()
+                .filter(s->s.getName().toLowerCase().contains(partname.get().toLowerCase())).toList();
+
+        for(var s : studentsToDelete){
+            studentRepository.delete(s.getId());
+        }
     }
 
     public Optional<Student> getStudentById(String id) {
-        return Optional.ofNullable(students.get(id));
+        return studentRepository.findById(id);
     }
 }
