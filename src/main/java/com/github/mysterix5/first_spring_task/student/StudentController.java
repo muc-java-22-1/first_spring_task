@@ -40,13 +40,11 @@ public class StudentController {
 
     @PutMapping
     public void changeStudentName(@RequestParam Optional<String> id, @RequestParam Optional<String> name){
-
         studentService.setStudentName(id, name);
     }
 
     @DeleteMapping
     public void deleteAllStudentsByPartName(@RequestParam Optional<String> partname){
-
         studentService.deleteAllStudentsByPartName(partname);
     }
 }
